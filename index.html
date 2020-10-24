@@ -4,9 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Pikadu</title>
+    <title>Pikadu - Главная</title>
     <link rel="stylesheet" href="./css/normalize.css" />
     <link rel="stylesheet" href="./css/style.css" />
+    <script src="./js/main.js" defer></script>
   </head>
   <body>
     <header class="header">
@@ -46,6 +47,11 @@
           </button>
         </div>
         <!-- /.input-group -->
+        <a href="#" class="menu-toggle" id="menu-toggle">
+          <span></span>
+          <span></span>
+          <span></span>
+        </a>
       </div>
       <!-- /.header-wrapper -->
     </header>
@@ -209,7 +215,7 @@
             <img width="40" height="40" src="./img/avatar3.jpg" alt="photo: user" class="user-avatar">
             <span class="user-name">islamovartem</span>
           </a>
-          <a href="" class="exit">
+          <a href="#" class="exit">
             <svg width="22" height="22" class="icon icon-exit">
               <use xlink:href="./img/icons.svg#exit"></use>
             </svg>
@@ -226,7 +232,7 @@
             <li class="sidebar-menu-icon"><a href="#" class="sidebar-menu-link">Игнор-лист</a></li>
           </ul>
         </nav>
-        <a href="#" class="button button-new-post">
+        <a href="./new-post.html" class="button button-new-post">
           <svg width="12" height="14" class="icon icon-fire">
             <use xlink:href="./img/icons.svg#fire"></use>
           </svg>
@@ -251,6 +257,5 @@
       <!-- /.sidebar -->
     </div>
     <!-- /.content -->
-   
   </body>
 </html>
