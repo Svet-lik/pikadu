@@ -1,11 +1,22 @@
-// старый код
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyCc8Bo35YhxQ3Bax_4wLJtpWYMcaCKYvc8",
+  authDomain: "pikadu-13112020.firebaseapp.com",
+  databaseURL: "https://pikadu-13112020.firebaseio.com",
+  projectId: "pikadu-13112020",
+  storageBucket: "pikadu-13112020.appspot.com",
+  messagingSenderId: "1019298924842",
+  appId: "1:1019298924842:web:19adbc408d54ad6f9e7653",
+};
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+console.log(firebase);
+
 // Создаем переменную, в которую положим кнопку меню
 let menuToggle = document.querySelector('#menu-toggle');
 // Создаем переменную, в которую положим меню
 let menu = document.querySelector('.sidebar');
 
-
-// наш код
 const regExpValidEmail = /^\w+@\w+\.\w{2,}$/;
 
 const loginElem = document.querySelector('.login');
@@ -20,22 +31,25 @@ const editElem = document.querySelector('.edit');
 const editContainer = document.querySelector('.edit-container');
 const editUsername = document.querySelector('.edit-username');
 const editPhotoURL = document.querySelector('.edit-photo');
-const userAvatarElem = document.querySelector('.user-avatar');	
+const userAvatarElem = document.querySelector('.user-avatar');
 const postsWrapper = document.querySelector('.posts');
+const buttonNewPost = document.querySelector('.button-new-post');
+const addPostElem = document.querySelector('.add-post')
 
 // временная база данных пользователей
-const listUsers = [
-  {
+const listUsers = [{
     id: '01',
     email: 'ann@ya.ru',
     password: '12345',
-    displayName: 'ann'
+    displayName: 'ann',
+    photo: 'img/avatar.jpg',
   },
   {
     id: '02',
     email: 'oleg@ya.ru',
     password: '345',
-    displayName: 'oleg'
+    displayName: 'oleg',
+    photo: 'img/avatar2.jpg',
   },
 ];
 // работает с авторизацией
@@ -47,7 +61,9 @@ const setUsers = {
     const user = this.getUser(email);
     if (user && user.password === password) {
       this.authorisedUser(user);
-      handler();
+      if (handler) {
+        handler()
+      }
     } else {
       alert('Пользователь с такими данными не найден')
     }
@@ -55,7 +71,9 @@ const setUsers = {
   // выход
   logOut(handler) {
     this.user = null;
-    handler();
+    if (handler) {
+      handler()
+    }
   },
   // регистрация
   signUp(email, password, handler) {
@@ -65,7 +83,7 @@ const setUsers = {
       alert('Введите данные');
       return;
     }
-    if (!this.getUser(email) ) {
+    if (!this.getUser(email)) {
       const user = {
         email,
         password,
@@ -73,7 +91,9 @@ const setUsers = {
       }
       listUsers.push(user);
       this.authorisedUser(user);
-      handler();
+      if (handler) {
+        handler()
+      }
     } else {
       alert('Пользователь с таким email уже зарегистрирован')
     }
@@ -86,7 +106,9 @@ const setUsers = {
     if (userPhoto) {
       this.user.photo = userPhoto;
     }
-    handler();
+    if (handler) {
+      handler()
+    }
   },
   // получаем конкретного пользователя по его email
   getUser(email) {
@@ -98,8 +120,7 @@ const setUsers = {
 };
 // пост
 const setPosts = {
-  allPosts: [
-    {
+  allPosts: [{
       title: 'Заголовлок поста',
       text: 'Далеко-далеко за словесными горами в стране гласных и согласных живут рыбные тексты. Языком что рот маленький реторический вершину текстов обеспечивает гор свой назад решила сбить маленькая дорогу жизни рукопись ему букв деревни предложения, ручеек залетают продолжил парадигматическая? Но языком сих пустился, запятой своего его снова решила меня вопроса моей своих пояс коварный, власти диких правилами напоивший они текстов ipsum первую подпоясал? Лучше, щеке подпоясал приставка большого курсивных на берегу своего? Злых, составитель агентство что вопроса ведущими о решила одна алфавит!',
       tags: [
@@ -109,7 +130,10 @@ const setPosts = {
         'мое',
         'случайность'
       ],
-      author: 'demo@saures.ru',
+      author: {
+        displayName: 'Ann',
+        photo: 'img/avatar.jpg',
+      },
       date: '11.11.2020, 20:54:00',
       like: 15,
       comments: 4
@@ -122,12 +146,35 @@ const setPosts = {
         'мое',
         'случайность'
       ],
-      author: 'mail2@mail.com',
+      author: {
+        displayName: 'Oleg',
+        photo: 'img/avatar2.jpg',
+      },
       date: '10.11.2020, 20:54:00',
       like: 45,
       comments: 12
     },
-  ]
+  ],
+
+  addPost(title, text, tags, handler) {
+    console.dir(this);
+    this.allPosts.unshift({
+      title,
+      text,
+      tags: tags.split(',').map(item => item.trim()),
+      author: {
+        displayName: setUsers.user.displayName,
+        photo: setUsers.user.photo,
+      },
+      date: new Date().toLocaleString(),
+      like: 0,
+      comments: 0,
+    })
+    if (handler) {
+      handler()
+    }
+  },
+
 }
 // переключает форму авторизации
 const toggleAuthDom = () => {
@@ -137,33 +184,48 @@ const toggleAuthDom = () => {
     userElem.style.display = '';
     userNameElem.textContent = user.displayName;
     userAvatarElem.src = user.photo || userAvatarElem.src;
+    buttonNewPost.classList.add('visible');
   } else {
     loginElem.style.dispay = '';
     userElem.style.display = 'none';
+    buttonNewPost.classList.remove('visible');
+    addPostElem.classList.remove('visible');
+    postsWrapper.classList.add('visible');
   }
 };
+
 // проверка email
 const emailValidate = (email) => {
-  const regExp = /^[-._a-z0-9]+@(?:[a-z0-9][-a-z0-9]+\.)+[a-z]{2,6}$/
-  console.log(regExp.test(email));
-  return regExp.test(email)
+  return regExpValidEmail.test(email)
 }
+const showAddPost = () => {
+  addPostElem.classList.add('visible');
+  postsWrapper.classList.remove('visible');
+}
+
 // выводит все посты
 const showAllPosts = () => {
-  
+  addPostElem.classList.remove('visible');
+  postsWrapper.classList.add('visible');
+
   let postHTML = '';
 
-  setPosts.allPosts.forEach(({ title, text, date, author, comments, like, tags }) => {
+  setPosts.allPosts.forEach(({
+    title,
+    text,
+    date,
+    author,
+    comments,
+    like,
+    tags
+  }) => {
     postHTML += `
         <section class="post">
         <div class="post-body">
           <h2 class="post-title">${title}</h2>
           <p class="post-text">${text}</p>
-          <div class="tags">${
-            (tags.map((tag) => {
-              return `<a href="#" class="tag">#${tag}</a>`
-            })).toString().split(',').join('')
-          }
+          <div class="tags">
+          ${tags.map(tag => `<a href="#${tag}" class="tag">#${tag}</a>`)}
           </div>
           <!-- /.tags -->
         </div>
@@ -196,10 +258,10 @@ const showAllPosts = () => {
           <!-- /.post-buttons -->
           <div class="post-author">
             <div class="author-about">
-              <a href="#" class="author-username">${author}</a>
+              <a href="#" class="author-username">${author.displayName}</a>
               <span class="post-time">${date}</span>
             </div>
-            <a href="#" class="author-link"><img src="img/avatar.jpeg" alt="avatar" class="author-avatar"></a>
+            <a href="#" class="author-link"><img src=${author.photo || "https://ryleeandcru.jp/assets/images/dummy/avatar-staff.png"} alt="avatar" class="author-avatar"></a>
           </div>
           <!-- /.post-author -->
         </div>
@@ -207,9 +269,10 @@ const showAllPosts = () => {
       </section>
     `;
   })
-  
-  postsWrapper.innerHTML = postHTML
-}
+
+  postsWrapper.innerHTML = postHTML;
+
+};
 
 const init = () => {
   // отслеживаем клик по кнопке меню и запускаем функцию 
@@ -263,15 +326,58 @@ const init = () => {
   });
 
   // отслеживаем клик по кнопке меню и запускаем функцию 
-menuToggle.addEventListener('click', function (event) {
-  // отменяем стандартное поведение ссылки
-  event.preventDefault();
-  // вешаем класс на меню, когда кликнули по кнопке меню 
-  menu.classList.toggle('visible');
-});
+  menuToggle.addEventListener('click', function (event) {
+    // отменяем стандартное поведение ссылки
+    event.preventDefault();
+    // вешаем класс на меню, когда кликнули по кнопке меню 
+    menu.classList.toggle('visible');
+  });
+
+  buttonNewPost.addEventListener('click', event => {
+    event.preventDefault();
+    showAddPost();
+  });
+
+  addPostElem.addEventListener('submit', event => {
+    event.preventDefault();
+    const {
+      title,
+      text,
+      tags
+    } = addPostElem.elements;
+    if (title.value.length < 6) {
+      alert('Слишком короткий заголовок');
+      return;
+    };
+    if (text.value.length < 50) {
+      alert('Слишком короткий пост');
+      return;
+    };
+
+    setPosts.addPost(title.value, text.value, tags.value, showAllPosts);
+    addPostElem.classList.remove('visible');
+    addPostElem.reset();
+
+  });
 
   showAllPosts();
   toggleAuthDom();
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+firebase.auth().onAuthStateChanged(function(user) {
+  if (user) {
+    // User is signed in.
+    var displayName = user.displayName;
+    var email = user.email;
+    var emailVerified = user.emailVerified;
+    var photoURL = user.photoURL;
+    var isAnonymous = user.isAnonymous;
+    var uid = user.uid;
+    var providerData = user.providerData;
+    // ...
+  } else {
+    console.log(null);
+  }
+});
